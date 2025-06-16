@@ -23,7 +23,7 @@ export const useIPChecker = () => {
       malicious: newResults.filter(r => r.status === 'completed' && r.totalReports > 100).length,
       clean: newResults.filter(r => r.status === 'completed' && r.totalReports === 0).length,
       errors: newResults.filter(r => r.status === 'error').length,
-      inProgress: newResults.filter(r => r.status === 'pending' || r.status === 'checking').length,
+      inProgress: newResults.filter(r => r.status === 'pending').length,
       stopped: newResults.filter(r => r.status === 'stopped').length,
     };
     setStats(newStats);
@@ -33,10 +33,10 @@ export const useIPChecker = () => {
     stopSignal.current = true;
     setIsRunning(false);
     
-    // Mark all pending/checking IPs as stopped
+    // Mark all pending IPs as stopped
     setResults(prev => {
       const updated = prev.map(result => 
-        (result.status === 'pending' || result.status === 'checking') 
+        result.status === 'pending'
           ? { ...result, status: 'stopped' as const }
           : result
       );
@@ -52,19 +52,16 @@ export const useIPChecker = () => {
     // Initialize results
     const initialResults: IPCheckResult[] = ips.map(ip => ({
       ip,
-      isPublic: false,
-      ipVersion: 4,
-      isWhitelisted: false,
-      abuseConfidencePercentage: 0,
-      countryCode: null,
-      countryName: null,
-      usageType: '',
-      isp: null,
-      domain: null,
-      totalReports: 0,
-      numDistinctUsers: 0,
-      lastReportedAt: null,
       status: 'pending',
+      totalReports: 0,
+      lastReportedAt: undefined,
+      countryName: undefined,
+      countryCode: undefined,
+      domain: undefined,
+      isp: undefined,
+      usageType: undefined,
+      isWhitelisted: false,
+      abuseConfidenceScore: 0
     }));
 
     setResults(initialResults);
@@ -81,13 +78,14 @@ export const useIPChecker = () => {
       // Update status to checking
       setResults(prev => {
         const updated = [...prev];
-        updated[i] = { ...updated[i], status: 'checking' };
+        updated[i] = { ...updated[i], status: 'pending' };
         updateStats(updated);
         return updated;
       });
 
       try {
-        const response = await AbuseIPDBService.checkIP(ip);
+        const result = await AbuseIPDBService.checkIP(ip);
+        console.log('Received result for IP:', ip, result);
         
         if (stopSignal.current) {
           setResults(prev => {
@@ -102,10 +100,17 @@ export const useIPChecker = () => {
         setResults(prev => {
           const updated = [...prev];
           updated[i] = {
-            ...updated[i],
-            ...response.data,
-            ip: response.data.ipAddress,
+            ip: result.ip,
             status: 'completed',
+            totalReports: result.totalReports,
+            lastReportedAt: result.lastReportedAt,
+            countryName: result.countryName,
+            countryCode: result.countryCode,
+            domain: result.domain,
+            isp: result.isp,
+            usageType: result.usageType,
+            isWhitelisted: result.isWhitelisted,
+            abuseConfidenceScore: result.abuseConfidenceScore
           };
           updateStats(updated);
           return updated;

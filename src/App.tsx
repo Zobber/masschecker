@@ -92,13 +92,12 @@ function App() {
             <div className="text-gray-600 dark:text-gray-400 space-y-2">
               <p>• <strong>Upload:</strong> Upload a text file with one IP per line or comma-separated</p>
               <p>• <strong>Check:</strong> Each IP is verified against the AbuseIPDB database</p>
-              <p>• <strong>Analyze:</strong> IPs are categorized based on the number of reports:
-                <ul className="list-disc list-inside ml-4 mt-1">
-                  <li>0 reports: Clean IP</li>
-                  <li>1-100 reports: Warning</li>
-                  <li>More than 100 reports: Malicious IP</li>
-                </ul>
-              </p>
+              <p>• <strong>Analyze:</strong> IPs are categorized based on the number of reports:</p>
+              <ul className="list-disc list-inside ml-4 mb-2">
+                <li>0 reports: Clean IP</li>
+                <li>1-100 reports: Warning</li>
+                <li>More than 100 reports: Malicious IP</li>
+              </ul>
               <p>• <strong>Control:</strong> You can stop the verification at any time</p>
               <p>• <strong>Export:</strong> Download the list of found malicious IPs</p>
             </div>

@@ -1,15 +1,15 @@
 export interface IPCheckResult {
   ip: string;
   status: 'pending' | 'completed' | 'error' | 'stopped';
-  totalReports?: number;
-  lastReportedAt?: string;
-  countryName?: string;
-  countryCode?: string;
-  domain?: string;
-  isp?: string;
-  usageType?: string;
-  isWhitelisted?: boolean;
-  abuseConfidenceScore?: number;
+  totalReports: number;
+  lastReportedAt: string | undefined;
+  countryName: string | undefined;
+  countryCode: string | undefined;
+  domain: string | undefined;
+  isp: string | undefined;
+  usageType: string | undefined;
+  isWhitelisted: boolean;
+  abuseConfidenceScore: number;
   error?: string;
 }
 
@@ -19,7 +19,7 @@ export interface APIResponse {
     isPublic: boolean;
     ipVersion: number;
     isWhitelisted: boolean;
-    abuseConfidencePercentage: number;
+    abuseConfidenceScore: number;
     countryCode: string | null;
     countryName: string | null;
     usageType: string;
@@ -28,6 +28,8 @@ export interface APIResponse {
     totalReports: number;
     numDistinctUsers: number;
     lastReportedAt: string | null;
+    hostnames: string[];
+    isTor: boolean;
   };
 }
 

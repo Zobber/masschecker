@@ -94,18 +94,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isProcessi
         className={`border-2 border-dashed rounded-lg p-8 text-center ${
           isDragging ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-300 dark:border-gray-700'
         }`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
-        <input
-          type="file"
+            <input
+              type="file"
           id="file-upload"
-          className="hidden"
+              className="hidden"
           accept=".txt"
           onChange={handleFileInput}
-          disabled={isProcessing}
-        />
+              disabled={isProcessing}
+            />
         <label
           htmlFor="file-upload"
           className="cursor-pointer"
@@ -117,10 +117,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isProcessi
             </p>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               Only .txt files are allowed
-            </p>
+          </p>
           </div>
         </label>
-      </div>
+        </div>
 
       {error && (
         <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-800">
@@ -136,7 +136,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, isProcessi
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Processing file...
           </p>
-        </div>
+      </div>
       )}
     </div>
   );

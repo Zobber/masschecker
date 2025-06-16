@@ -9,13 +9,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'https://api.abuseipdb.com/api/v2',
+      '/api/v2': {
+        target: 'https://api.abuseipdb.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-        secure: true,
+        secure: false,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; IP-Checker/1.0)'
+          'Accept': 'application/json'
         }
       }
     }
