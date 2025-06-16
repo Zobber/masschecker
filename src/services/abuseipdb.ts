@@ -84,6 +84,11 @@ export class AbuseIPDBService {
       const response = await this.makeRequest('/check', params);
       const data = response.data;
       console.log('Processing IP check response:', data);
+      console.log('Country data:', {
+        name: data.countryName,
+        code: data.countryCode,
+        raw: data
+      });
 
       return {
         ip,

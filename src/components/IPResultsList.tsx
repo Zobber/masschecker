@@ -14,6 +14,17 @@ import {
   StopCircle
 } from 'lucide-react';
 
+interface IPResult {
+  ip: string;
+  status: 'pending' | 'completed' | 'error' | 'stopped' | 'checking';
+  totalReports: number;
+  abuseConfidenceScore: number;
+  countryCode?: string;
+  countryName?: string;
+  isp?: string;
+  lastReportedAt?: string;
+}
+
 interface IPResultsListProps {
   results: IPCheckResult[];
   onExportMalicious: () => void;
@@ -25,7 +36,10 @@ export const IPResultsList: React.FC<IPResultsListProps> = ({ results, onExportM
 
   const filteredResults = useMemo(() => {
     return results.filter(result => {
-      const matchesSearch = result.ip.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = 
+        result.ip.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (result.isp?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
+      
       const matchesStatus = statusFilter === 'all' || 
         (statusFilter === 'malicious' && result.totalReports > 100) ||
         (statusFilter === 'warning' && result.totalReports > 0 && result.totalReports <= 100) ||
@@ -80,8 +94,41 @@ export const IPResultsList: React.FC<IPResultsListProps> = ({ results, onExportM
 
   const maliciousCount = results.filter(r => r.totalReports > 100).length;
 
+  const onExportResults = () => {
+    const headers = ['IP', 'Total Reports', 'Abuse Score', 'Country', 'ISP', 'Last Reported'];
+    const csvData = results.map(result => [
+      result.ip,
+      result.totalReports,
+      result.abuseConfidenceScore,
+      result.countryCode || 'Unknown',
+      result.isp || 'Unknown',
+      result.lastReportedAt ? new Date(result.lastReportedAt).toLocaleString() : 'Never'
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ip_verification_results_${new Date().toISOString()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (results.length === 0) {
-    return null;
+    return (
+      <div className="card">
+        <div className="p-6">
+          <p className="text-gray-400 text-center">No results to display</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -90,13 +137,13 @@ export const IPResultsList: React.FC<IPResultsListProps> = ({ results, onExportM
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h3 className="text-lg font-semibold text-gray-100">Verification Results</h3>
           
-          {maliciousCount > 0 && (
+          {results.length > 0 && (
             <button
-              onClick={onExportMalicious}
+              onClick={onExportResults}
               className="btn-danger flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
-              Export Malicious IPs ({maliciousCount})
+              Export All Results ({results.length})
             </button>
           )}
         </div>
@@ -106,7 +153,7 @@ export const IPResultsList: React.FC<IPResultsListProps> = ({ results, onExportM
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search IP..."
+              placeholder="Search by IP or ISP..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="input pl-10"
@@ -146,13 +193,10 @@ export const IPResultsList: React.FC<IPResultsListProps> = ({ results, onExportM
                   
                   {result.status === 'completed' && (
                     <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                      
-                      {result.countryName && (
-                        <div className="flex items-center gap-1 text-gray-400">
-                          <Globe className="w-4 h-4" />
-                          <span>{result.countryName} ({result.countryCode})</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1 text-gray-400">
+                        <Globe className="w-4 h-4" />
+                        <span>{result.countryCode || 'Unknown'}</span>
+                      </div>
                       
                       {result.isp && (
                         <div className="flex items-center gap-1 text-gray-400">
