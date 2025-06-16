@@ -2,7 +2,8 @@
 
 A modern web application for IP address verification and analysis, built with React, TypeScript, and Tailwind CSS.
 
-![image](https://github.com/user-attachments/assets/8e60432f-8ec6-4a3e-985b-0ef13715c475)
+![image](https://github.com/user-attachments/assets/525fce9f-808f-48b7-8b7b-5448663ab071)
+
 
 
 
