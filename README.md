@@ -26,8 +26,7 @@ A modern web application for IP address verification and analysis, built with Re
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Zobber/ip-checker.git
-cd ip-checker
+git clone https://github.com/Zobber/masschecker.git
 ```
 
 2. Install dependencies:
@@ -56,9 +55,6 @@ npm run dev
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Author
-
-- **Erick Z** - [@Zobber](https://github.com/Zobber)
 
 ## License
 
